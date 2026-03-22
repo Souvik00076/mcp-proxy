@@ -5,8 +5,8 @@ services:
     command: >
       sh -c "redis-server
       --appendonly yes
-      --requirepass $${REDIS_PASSWORD}
-      --port $${REDIS_PORT:-6379}"
+      --requirepass ${REDIS_PASSWORD}
+      --port ${REDIS_PORT:-6379}"
     env_file:
       - .env.redis
     volumes:
