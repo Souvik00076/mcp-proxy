@@ -23,6 +23,8 @@ ENV/
 
 # Docker
 docker-compose.override.yml
+
+# Separate repositories (clone separately)
 email-mcp/
 
 # SSL/TLS Certificates

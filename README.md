@@ -15,11 +15,15 @@ A production-ready proxy system with Redis caching, email server, and Nginx reve
 
 ## Quick Start
 
-### 1. Clone the repository
+### 1. Clone the repositories
 
 ```bash
-git clone <repository-url>
+# Clone the main proxy repository
+git clone <mcp-proxy-repository-url>
 cd mcp-proxy
+
+# Clone the email-mcp repository (separate repo)
+git clone <email-mcp-repository-url> email-mcp
 ```
 
 ### 2. Configure environment variables
