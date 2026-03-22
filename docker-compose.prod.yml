@@ -1,0 +1,61 @@
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: mcp-redis
+    command: >
+      sh -c "redis-server
+      --appendonly yes
+      --requirepass $${REDIS_PASSWORD}
+      --port $${REDIS_PORT:-6379}"
+    env_file:
+      - .env.redis
+    volumes:
+      - redis-data:/data
+    networks:
+      - internal-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "-p", "${REDIS_PORT:-6379}", "-a", "${REDIS_PASSWORD}", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  email-server:
+    image: email-mcp
+    container_name: email-mcp-server
+    env_file:
+      - .env.email
+    networks:
+      - internal-network
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    container_name: mcp-proxy-nginx-prod
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+    depends_on:
+      email-server:
+        condition: service_started
+    networks:
+      - internal-network
+      - public-network
+    restart: unless-stopped
+
+volumes:
+  redis-data:
+
+networks:
+  internal-network:
+    driver: bridge
+    internal: false
+  public-network:
+    driver: bridge
